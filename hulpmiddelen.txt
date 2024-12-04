@@ -1,0 +1,51 @@
+====================================================================================================================================
+====================================================================================================================================
+                                                        BASIC MQTT FUNCTIONS
+====================================================================================================================================
+====================================================================================================================================
+
+1. mqtt_client_init()
+Explanation: Initializes the MQTT client, preparing it for use by configuring the necessary parameters like broker address, port, and client ID.
+
+2. mqtt_connect()
+Explanation: Establishes a connection between the MQTT client and the MQTT broker. It handles the process of authenticating (if required) and connecting.
+
+3. mqtt_disconnect()
+Explanation: Disconnects the MQTT client from the broker, closing the connection properly.
+
+4. mqtt_subscribe()
+Explanation: Subscribes to a specific topic. The client will receive messages that are published to this topic.
+
+5. mqtt_unsubscribe()
+Explanation: Unsubscribes from a specific topic, so the client will no longer receive messages published to it.
+
+6. mqtt_publish()
+Explanation: Publishes a message to a specified topic on the MQTT broker. The message can contain any payload the client needs to send.
+
+7. mqtt_message_callback()
+Explanation: This function defines the callback function that handles incoming messages from subscribed topics. It is triggered when a new message arrives.
+
+8. mqtt_yield()
+Explanation: Processes incoming MQTT messages and ensures that the MQTT client can continue to interact with the broker. This function should be called in a loop.
+
+9. mqtt_ping()
+Explanation: Sends a PING request to the broker to ensure the connection is still alive. It is used in keep-alive mechanisms.
+
+10. mqtt_publish_with_qos()
+Explanation: Publishes a message with a specific Quality of Service (QoS) level. The QoS level determines the delivery guarantee for the message (e.g., once, at least once, or exactly once).
+
+11. mqtt_set_will()
+Explanation: Configures a "last will" message that the broker sends if the client unexpectedly disconnects. This ensures a message is sent to other clients about the failure.
+
+12. mqtt_reconnect()
+Explanation: Attempts to reconnect the client to the broker if the connection is lost.
+
+13. mqtt_get_client_id()
+Explanation: Returns the client ID used by the MQTT client. This ID is used by the broker to identify the client.
+====================================================================================================================================
+====================================================================================================================================
+                                                        STARTING COMPILER MANUALLY
+====================================================================================================================================
+====================================================================================================================================
+
+-gcc -o 
