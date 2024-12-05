@@ -18,11 +18,12 @@
 #include <MQTTClient.h> //library for MQTT functions
 
 #define IP_ADDRESS "tcp://192.168.0.5:1883" //IP-ADDRESS:port
-#define CLIENT ""
+#define CLIENTID " "
 #define PAYLOAD "Hello from RPi 101!"
 #define topic "MB_subscribe" //subscribing to MQTT to receive message
 #define TIMEOUT 10000L
 
+//When message arrived, added to txt file
 void messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_message *message) {
     FILE *file;
 
@@ -40,9 +41,28 @@ void messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mes
 }
 
 int main() {
-    MQTTClient CLIENT;
+    MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     int rc;
 
-    
+    //init MQTT CLIENT
+    MQTTClient_create(&client, IP_ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+
+    //Connection options
+    conn_opts.keepAliveInterval = 20;
+    conn_opts.cleansession = 1;
+
+    //Connecting to MB_subscribe topic/MQTT
+    if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
+        printf("Failed to connect, return code %d\n", rc);
+        return -1;
+    }
+
+    MQTTClient_setCallbacks(client, NULL, NULL, messageHandler, NULL);
+
+    //Subscribing to MB_subscribe
+    if ((rc = MQTTClient_subscribe(client, topic, 0)) != MQTTCLIENT_SUCCESS) {
+        printf("Cannot subscribe. Check if topic name is correct! Return code: %d\n", rc);
+        return -1;
+    }
 }
