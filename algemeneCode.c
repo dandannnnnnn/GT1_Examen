@@ -30,7 +30,7 @@ void messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mes
     file = fopen("receivedMSGs.txt", "a");
     if (file != NULL) {
         fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
-        fclose(file;)
+        fclose(file);
     } else {
         printf("Error: cannot open file");
     }
