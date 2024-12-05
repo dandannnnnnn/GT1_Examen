@@ -50,7 +50,7 @@ Explanation: Returns the client ID used by the MQTT client. This ID is used by t
 ====================================================================================================================================
 
 gcc -o algemeneCode algemeneCode.c -lpaho-mqtt3c
-run file: ./algemeneCode
+run file: ./algemeneCode  (bv.: ./testingCodes)
 
 ====================================================================================================================================
 ====================================================================================================================================
@@ -63,7 +63,7 @@ cd ~/Documents/C-Files/GT1_Examen
 ---Normal Files---
 1) cd ~/Documents/C-Files/GT1_Examen
 2) chmod 777 filename
-3) run file: ./filename
+3) run file: ./filename  (bv.: ./algemeneCode.c)
 
 --- Shellscript ---
 1) cd ~/Documents/C-Files/GT1_Examen
