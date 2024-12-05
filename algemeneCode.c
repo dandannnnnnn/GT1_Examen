@@ -33,16 +33,13 @@ int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mess
     //opening file and adding the incoming MSG to the txt file: receivedMSGs.txt
     file = fopen("receivedMSGs.txt", "a");
     if (file != NULL) {
-        fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
-        fflush(file); //forcing msg to be written into the file)
-        fclose(file);
+        printf("Opening file\n");
     } else {
-        perror("Error: cannot open file");
+        perror("Error: cannot open file\n");
     }
 
-    MQTTClient_freeMessage(&message);
-    MQTTClient_free(topicName);
-
+    fprintf(file, "%s\n", (char *)PAYLOAD);
+    fclose(file);
 }
 
 int main() {
