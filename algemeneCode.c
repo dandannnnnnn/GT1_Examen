@@ -27,6 +27,7 @@
 void messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_message *message) {
     FILE *file;
 
+    //opening file and adding the incoming MSG to the txt file: receivedMSGs.txt
     file = fopen("receivedMSGs.txt", "a");
     if (file != NULL) {
         fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
