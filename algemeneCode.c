@@ -38,7 +38,7 @@ int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mess
         perror("Error: cannot open file\n");
     }
 
-    fprintf(file, "%s\n", (char *)PAYLOAD);
+    fprintf(file, "%s\n"), message->payloadlen, (char *)message->payload;
     fclose(file);
 }
 
