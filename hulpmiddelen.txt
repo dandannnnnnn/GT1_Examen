@@ -87,3 +87,6 @@ cd ~/Documents/C-Files/GT1_Examen
 ====================================================================================================================================
 
 https://github.com/ev3dev/ev3dev/issues/1242
+
+https://www.geeksforgeeks.org/basics-file-handling-c/
+
