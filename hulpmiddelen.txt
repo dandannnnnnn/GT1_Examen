@@ -77,4 +77,6 @@ cd ~/Documents/C-Files/GT1_Examen
 ====================================================================================================================================
 
 1. make file EXECUTABLE
-2. 
+2. start compiler on vscode MANUALLY
+3. mosquitto_sub -h IP-ADRES -t TOPIC
+4. run file (./filename)
