@@ -33,7 +33,7 @@ void messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mes
         fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
         fclose(file);
     } else {
-        printf("Error: cannot open file");
+        perror("Error: cannot open file");
     }
 
     MQTTClient_freeMessage(&message);
@@ -46,34 +46,39 @@ int main() {
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     int rc;
 
-    //init MQTT CLIENT
+    // Initialize the MQTT client
     MQTTClient_create(&client, IP_ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
 
-    //Connection options
+    // Set connection options
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
 
-    //Connecting to MB_subscribe topic/MQTT
+    // Connect to the broker
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
         return -1;
     }
 
+    // Set the callback function for message arrival
     MQTTClient_setCallbacks(client, NULL, NULL, messageHandler, NULL);
 
-    //Subscribing to MB_subscribe
+    // Subscribe to MB_subscribe
     if ((rc = MQTTClient_subscribe(client, topic, 0)) != MQTTCLIENT_SUCCESS) {
-        printf("Cannot subscribe. Check if topic name is correct! Return code: %d\n", rc);
+        printf("Failed to subscribe, return code %d\n", rc);
         return -1;
     }
 
-    //Program keeps running to receive and publish messages
-    for(;;) {
+    printf("Listening for messages on topic: %s\n", topic);
+
+    // Keep the program running to receive messages and append them in the txt file
+    for (;;) {
         ;
     }
 
+    // Disconnect and clean up (not reachable in this example due to infinite loop)
     MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);
 
     return 0;
+}
 }
