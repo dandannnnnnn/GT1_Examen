@@ -17,7 +17,7 @@
 #include <string.h>
 #include <MQTTClient.h> //library for MQTT functions
 
-#define IP_ADDRESS "192.168.0.5:1883" //IP-ADDRESS:port
+#define IP_ADDRESS "tcp://192.168.0.5:1883" //IP-ADDRESS:port
 #define CLIENTID " "
 #define PAYLOAD "Hello from RPi 101!"
 #define topic "MB_subscribe" //subscribing to MQTT to receive message
@@ -71,8 +71,8 @@ int main() {
     printf("Listening for messages on topic: %s\n", topic);
 
     // Keep the program running to receive messages and append them in the txt file
-    for (;;) {
-        ;
+    while (1) {
+        MQTTClient_yield();
     }
 
     // Disconnect and clean up (not reachable in this example due to infinite loop)
