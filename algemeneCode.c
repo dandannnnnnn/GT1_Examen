@@ -31,10 +31,10 @@ int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mess
     FILE *file;
 
     //opening file and adding the incoming MSG to the txt file: receivedMSGs.txt
-    file = fopen("/home/pi/Documents/C-Files/GT1_Examen/receivedMSGs.txt", "a");
+    file = fopen("receivedMSGs.txt", "a");
     if (file != NULL) {
         fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
-        fflush(file);
+        fflush(file); //forcing msg to be written into the file)
         fclose(file);
     } else {
         perror("Error: cannot open file");
