@@ -55,7 +55,49 @@ int main(int argc, char* argv[]) {
 
 ====================================================================================================================================
 ====================================================================================================================================
-                                                    Split line into strings with '\t'
+                                                    Split line into strings with ';' and '\t'
 ====================================================================================================================================
 ====================================================================================================================================
+int main() {
+    char line[] = "cat,dog,fish,bird";  // Example line to split
+    char *token;
+
+    // Use strtok to split the string by the comma delimiter
+    token = strtok(line, ",");
+    
+    // Loop through all tokens
+    while (token != NULL) {
+        printf("%s\t", token);  // Print each token followed by a tab
+        token = strtok(NULL, ",");  // Get the next token
+    }
+
+    return 0;
+}
+
+====================================================================================================================================
+====================================================================================================================================
+                                                    Split line into strings with ';' and SPACE
+====================================================================================================================================
+====================================================================================================================================
+
+int main() {
+    char line[] = "cat,dog,fish,bird";  // Example line to split
+    char *token;
+    int first = 1;
+
+    // Use strtok to split the string by the comma delimiter
+    token = strtok(line, ",");
+    
+    // Loop through all tokens
+    while (token != NULL) {
+        if (!first) {
+            printf(" ");  // Print space before each token except the first
+        }
+        printf("%s", token);  // Print each token
+        first = 0;  // Set the flag after the first token
+        token = strtok(NULL, ",");  // Get the next token
+    }
+
+    return 0;
+}
 
