@@ -76,7 +76,6 @@ int main() {
 
     // Keep the program running to receive messages and append them in the txt file
     while (1) {
-        MQTTClient_yield();
     }
 
     // Disconnect and clean up (not reachable in this example due to infinite loop)
