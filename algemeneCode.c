@@ -33,7 +33,6 @@ int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mess
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
 
-    return 1;
 }
 
 //adding messages into the txt file
@@ -48,6 +47,7 @@ void message_FILE(const char *message, int messageLEN) {
     fclose(file);
     printf("Message saved in file\n");
 
+    return 1;
 }
 
 int main() {
