@@ -34,6 +34,7 @@ int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_mess
     file = fopen("/home/pi/Documents/C-Files/GT1_Examen/receivedMSGs.txt", "a");
     if (file != NULL) {
         fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
+        fflush(file);
         fclose(file);
     } else {
         perror("Error: cannot open file");
