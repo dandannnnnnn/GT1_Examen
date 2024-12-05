@@ -24,7 +24,7 @@
 #define TIMEOUT 10000L
 
 //When message arrived, added to txt file
-void messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_message *message) {
+int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_message *message) {
     FILE *file;
 
     //opening file and adding the incoming MSG to the txt file: receivedMSGs.txt
