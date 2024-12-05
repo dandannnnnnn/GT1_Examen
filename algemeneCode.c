@@ -23,25 +23,30 @@
 #define topic "MB_subscribe" //subscribing to MQTT to receive message
 #define TIMEOUT 10000L
 
-//When message arrived, added to txt file
+//Message arrived
 int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_message *message) {
     printf("Message received on topic: %s\n", topicName);
     printf("Message payload: %.*s\n", message->payloadlen, (char *)message->payload);
-    
-    FILE *file;
 
-    //opening file and adding the incoming MSG to the txt file: receivedMSGs.txt
-    file = fopen("receivedMSGs.txt", "a");
-    if (file != NULL) {
-        fprintf(file, "Topic: %s\tMessage: %.*s\n", topicName, message -> payloadlen, (char *)message->payload);
-        fflush(file); //forcing msg to be written into the file)
-        fclose(file);
-    } else {
-        perror("Error: cannot open file");
-    }
+    message_FILE((char *)message->payload, message->payloadlen);
 
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
+
+    return 1;
+}
+
+//adding messages into the txt file
+void message_FILE(const char *message, int messageLEN) {
+    FILE *file = fopen("receivedMSGs.txt", "a");
+    if (file == NULL) {
+        printf("Error: cannot open file %s\n", file);
+        return 0;
+    }
+
+    fprintf(file, "%.s*\n", messageLEN, message);
+    fclose(file);
+    printf("Message saved in file\n");
 
 }
 
