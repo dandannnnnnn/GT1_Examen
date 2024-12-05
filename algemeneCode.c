@@ -65,4 +65,9 @@ int main() {
         printf("Cannot subscribe. Check if topic name is correct! Return code: %d\n", rc);
         return -1;
     }
+
+    //Program keeps running to receive and publish messages
+    for(;;) {
+        ;
+    }
 }
