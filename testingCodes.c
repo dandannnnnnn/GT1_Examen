@@ -113,6 +113,8 @@ void addTo_FILE(const char *messageFormatted) {
     }
     fprintf(file, "%s\n", messageFormatted);
     fclose(file);
+
+    
 }
 
 
