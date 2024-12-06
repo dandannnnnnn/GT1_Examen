@@ -9,3 +9,20 @@ Datum: 06/12/2024
 ===============================================================================================================================
 ===============================================================================================================================
 
+----------------------------
+FUNCTION: messageHandler
+Purpose: When message arrives, the msg will be added to txt file
+----------------------------
+
+add print statements for topic and message for DEBUGGING.
+
+open file and append
+    Begin IF-statement
+IF: file is not NULL then print("Opening file\n")
+ELSE: print("Cannot open file\n")
+    End IF-statement
+
+print message into the file and close the file.
+
+---------------------------
+FUNCTION: 

@@ -25,8 +25,11 @@
 
 //When message arrived, added to txt file
 int messageHandler(void *context, char *topicName, int topicLEN, MQTTClient_message *message) {
+    #ifdef DEBUG
     printf("Message received on topic: %s\n", topicName);
     printf("Message payload: %.*s\n", message->payloadlen, (char *)message->payload);
+    
+    #endif 
     
     FILE *file;
 
