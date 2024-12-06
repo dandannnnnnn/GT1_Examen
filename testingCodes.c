@@ -90,7 +90,6 @@ char arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message
 
     MQTTClient_publishMessage(client, topicPUB, &pubmsg, &token);
     printf("Publishing to topic %s\n",topicPUB);
-
 }
 float startCalculations() {
     float start_dagverbruik = 6340.33594;
@@ -132,7 +131,31 @@ void addTo_FILE(const char *messageFormatted) {
     }
     fprintf(file, "%s\n", messageFormatted);
     fclose(file);
+    
+    //for-lus
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    printf("Elektriciteit- en gas verbruik - totalen per dag\n");
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
+    printf("STARTWAARDEN\n\n");
+    printf("DATE - TIME: %s\n",dateTime);
+    printf("DAG\tTotaal verbruik\t= %f kWh\n");
+    printf("DAG\tTotaal opbrengst\t= %f kWh\n");
+    printf("NACHT\tTotaal verbruik\t= %f kWh\n");
+    printf("NACHT\tTotaal opbrengst\t= %f kWh\n");
+    printf("GAS\tTotaal verbruik\t= %f m³\n");
+    printf("---------------------------------------------------------------\n");
+    printf("TOTALEN:\n");
+    printf("---------------------------------------------------------------\n\n");
 
+    //while-lus
+    printf("Datum: %s\n");
+    printf("---------------------\n");
+    printf("STROOM:\n");
+    printf("\tTotaal verbruik\t=\t%f kWh\n");
+    printf("\tTotaal opbrengst\t=\t%f kWh\n");
+    printf("GAS:\n");
+    printf("\tTotaal verbruik\t=\t%f kWh\n");
+    printf("*");
 
 }
 
