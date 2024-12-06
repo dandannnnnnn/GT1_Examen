@@ -13,6 +13,7 @@
 //=============================================================================================================
 //=============================================================================================================
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <MQTTClient.h>
@@ -143,7 +144,7 @@ int main() {
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
-        exit(1);
+        return 1;
     }
 
     printf("Subscribing to topic %s for client %s using QoS%d\n\n", topicSUB, CLIENTID, QOS);
