@@ -59,22 +59,22 @@ void delivered(void *context, MQTTClient_deliveryToken dt) {
 //dateTime ; totaal_dagverbruik ; totaal_nachtverbruik ; totaal_dagopbrengst ; totaal_nachtopbrengst ; totaal_gasverbruik
 
 //Extracts msg and splits into fields
-int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
+char arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     char *payload = message->payload;
     char *token_str;
     char timeBUFFER[20];
 
     //start: dateTime
     token_str = strtok(payload, ";");
-    float *totaal_dagverbruik = token_str;
+    char *totaal_dagverbruik = token_str;
     token_str = strtok(NULL, ";");
-    float *totaal_nachtverbruik = token_str;
+    char *totaal_nachtverbruik = token_str;
     token_str = strtok(NULL, ";");
-    float *totaal_dagopbrengst = token_str;
+    char *totaal_dagopbrengst = token_str;
     token_str = strtok(NULL, ";");
-    float *totaal_nachtopbrengst = token_str;
+    char *totaal_nachtopbrengst = token_str;
     token_str = strtok(NULL, ";");
-    float *totaal_gasverbruik = token_str;
+    char *totaal_gasverbruik = token_str;
     token_str = strtok(token_str, NULL); //end splitting in fields
     
 }
@@ -102,7 +102,6 @@ void dateTime(char *timestamp) {
         tmp->tm_year-100, tmp->tm_mon+1, tmp->tm_mday, // YEAR-MONTH_DAY
         tmp->tm_hour, tmp->tm_min, tmp->tm_sec ); // HOUR:MIN:SEC
      
-    return( 0 );
 }
 
 void addTo_FILE(const char *messageFormatted) {
@@ -114,7 +113,7 @@ void addTo_FILE(const char *messageFormatted) {
     fprintf(file, "%s\n", messageFormatted);
     fclose(file);
 
-    
+
 }
 
 
@@ -134,7 +133,7 @@ int main() {
     conn_opts.cleansession = 1;
 
     // Define the correct call back functions when messages arrive
-    MQTTClient_setCallbacks(client, client, connlost, arrivedMSG, delivered);
+    MQTTClient_setCallbacks(client, CLIENTID, connlost, arrivedMSG, delivered);
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
