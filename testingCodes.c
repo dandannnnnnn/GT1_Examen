@@ -60,7 +60,7 @@ void delivered(void *context, MQTTClient_deliveryToken dt) {
 //dateTime ; totaal_dagverbruik ; totaal_nachtverbruik ; totaal_dagopbrengst ; totaal_nachtopbrengst ; totaal_gasverbruik
 
 //Extracts msg and splits into fields
-char arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
+int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     char *payload = message->payload;
     char *token_str;
     char timeBUFFER[20];
@@ -177,7 +177,7 @@ int main() {
     conn_opts.cleansession = 1;
 
     // Define the correct call back functions when messages arrive
-    MQTTClient_setCallbacks(client, CLIENTID, connlost, arrivedMSG, delivered);
+    //MQTTClient_setCallbacks(client, CLIENTID, connlost, arrivedMSG, delivered);
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
