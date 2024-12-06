@@ -39,20 +39,6 @@ volatile float totaal_dagverbruik, totaal_nachtverbruik, totaal_dagopbrengst, to
 volatile float totaal_gasverbruik;
 volatile float totale_stroomverbruik, totale_stroomopbrengst, totale_gasverbruik;
 
-struct meter_data {
-    char dateTime[DATE_TIME_LEN]; //only 1 dateTime necessarry
-    float totaal_dagverbruik;
-    float totaal_nachtverbruik;
-    float totaal_dagopbrengst;
-    float totaal_nachtopbrengst;
-
-    float totaal_gasverbruik;
-};
-
-void addTo_FILE(const char *message);
-void dateTime(char *timestamp);
-float calculations();
-float startCalculations();
 
 void delivered(void *context, MQTTClient_deliveryToken dt) {
     printf("Message with token value %d delivery confirmed\n", dt);
@@ -123,50 +109,6 @@ int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message 
     return 1;
 }
 
-float startCalculations() {
-    float start_dagverbruik = 6340.33594;
-    float start_dagopbrengst = 298.30499;
-    float start_nachtverbruik = 6664.99414;
-    float start_nachtopbrengst = 146.75200;
-
-    float start_gasverbruik = 6184.92480;
-} 
-//Calculating the usage of electricity and gas
-float calculations(float startDagVerbruik, float startNachtVerbruik, float startDagOpbrengst, float startNachtOpbrengst) {
-    totale_stroomverbruik = startDagVerbruik + startNachtVerbruik;
-    totale_stroomopbrengst = startDagOpbrengst + startNachtOpbrengst;
-    totale_gasverbruik = totaal_gasverbruik * 11.55;
-    return totale_stroomverbruik - totale_stroomopbrengst;
-    return totale_gasverbruik;
-}
-
-void dateTime(char *timestamp) {
-        time_t t ;
-    struct tm *tmp ;
-    
-    time( &t );
-    tmp = localtime( &t );
-     
-    //formatting dateTime string
-    sprintf( timestamp, "%02d.%02d.%02d-%02d:%02d:%02d", 
-        tmp->tm_year-100, tmp->tm_mon+1, tmp->tm_mday, // YEAR-MONTH_DAY
-        tmp->tm_hour, tmp->tm_min, tmp->tm_sec ); // HOUR:MIN:SEC
-     
-}
-
-void addTo_FILE(const char *message) {
-    FILE *file = fopen("receivedMSGs.txt", "a");
-    if (file == NULL) {
-        perror("Error: Cannot open file");
-        return;
-    }
-    fprintf(file, "%s\n", message);
-    fclose(file);
-}
-
-void connlost(void *context, char *cause) {
-    printf("\nConnection lost\nCause: %s\n", cause);
-}
 
 int main() {
     // Initialize MQTT client
