@@ -20,7 +20,7 @@
 #define IP_ADDRESS "tcp://192.168.0.5:1883" //IP-ADDRESS:port
 #define CLIENTID " "
 #define PAYLOAD "Hello from RPi 101!"
-#define topic "MB_subscribe" //subscribing to MQTT to receive message
+#define topic "P1/DM3" //subscribing to MQTT to receive message
 #define TIMEOUT 10000L
 
 //When message arrived, added to txt file
