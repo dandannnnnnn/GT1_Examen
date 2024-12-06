@@ -104,9 +104,31 @@ int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message 
     pubmsg.retained = 0;
 
     char outputMessage[outputLEN];
+    snprintf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
+    Elektriciteit- en gas verbruik - totalen per dag\n
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n
+    STARTWAARDEN\n\n
+    DATE-TIME: %s\n
+    DAG\tTotaal verbruik\t= 6340.33594 kWh\n
+    DAG\tTotaal opbrengst\t= 298.30499 kWh\n
+    NACHT\tTotaal verbruik\t= 6664.99414 kWh\n
+    NACHT\tTotaal opbrengst\t= 146.75200 kWh\n
+    GAS\tTotaal verbruik\t= 6184.92480 m³\n
+    -------------------------------------------------------------------------\n
+    TOTALEN:\n
+    -------------------------------------------------------------------------\n\n
+    ");
+
     snprintf(outputMessage, outputLEN, 
-    "Date: %s\nDagverbruik: %.2f kWh\nNachtverbruik: %.2f kWh\nDagopbrengst: %.2f kWh\nNachtopbrengst: %.2f kWh\nGasverbruik: %.2f m³",
-    dateTime, totaal_dagverbruik, totaal_nachtverbruik, totaal_dagopbrengst, totaal_nachtopbrengst, totaal_gasverbruik);
+    "Date: %s\n
+    -------------
+    STROOM:\n
+    \tTotaal verbruik\t=\t %.2f kWh
+    \n\tTotaal opbrengst\t=\t %.2f kWh
+    \nGAS:\n
+    \tTotaal verbruik\t=\t %.2f m³\n"
+    dateTime, totale_stroomverbruik, totale_stroomopbrengst, totale_gasverbruik);
+
 
     pubmsg.payload = outputMessage;
     pubmsg.payloadlen = strlen(outputMessage);
