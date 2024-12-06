@@ -142,11 +142,11 @@ void addTo_FILE(const char *message) {
     printf(file,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     printf(file,"STARTWAARDEN\n\n");
     printf(file,"DATE - TIME: %s\n",dateTime);
-    printf(file,"DAG\tTotaal verbruik\t= %f kWh\n");
-    printf(file,"DAG\tTotaal opbrengst\t= %f kWh\n");
-    printf(file,"NACHT\tTotaal verbruik\t= %f kWh\n");
-    printf(file,"NACHT\tTotaal opbrengst\t= %f kWh\n");
-    printf(file,"GAS\tTotaal verbruik\t= %f m³\n");
+    printf(file,"DAG\tTotaal verbruik\t= %f kWh\n",totaal_dagverbruik);
+    printf(file,"DAG\tTotaal opbrengst\t= %f kWh\n",totaal_dagopbrengst);
+    printf(file,"NACHT\tTotaal verbruik\t= %f kWh\n", totaal_nachtverbruik);
+    printf(file,"NACHT\tTotaal opbrengst\t= %f kWh\n", totaal_nachtopbrengst);
+    printf(file,"GAS\tTotaal verbruik\t= %f m³\n", totaal_gasverbruik);
     printf(file,"---------------------------------------------------------------\n");
     printf(file,"TOTALEN:\n");
     printf(file,"---------------------------------------------------------------\n\n");
@@ -180,10 +180,11 @@ int main() {
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
 
+    MQTTClient_setCallbacks(client, client, connlost, arrivedMSG, delivered);
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
-        return 1;
+        exit(1);
     }
 
     printf("Subscribing to topic %s for client %s using QoS%d\n\n", topicSUB, CLIENTID, QOS);
