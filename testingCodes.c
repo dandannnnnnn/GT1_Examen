@@ -79,6 +79,8 @@ int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message 
     counter++;
 
 
+
+
 }
 
 void dateTime(char *timestamp) {
@@ -94,4 +96,40 @@ void dateTime(char *timestamp) {
         tmp->tm_hour, tmp->tm_min, tmp->tm_sec ); // HOUR:MIN:SEC
      
     return( 0 );
+}
+
+void connlost(void *context, char *cause) {
+    printf("\nConnection lost\n");
+    printf("     cause: %s\n", cause);
+}
+
+int main() {
+    // Open MQTT client for listening
+    MQTTClient client;
+    MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+    int rc;
+
+    MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    conn_opts.keepAliveInterval = 20;
+    conn_opts.cleansession = 1;
+
+    // Define the correct call back functions when messages arrive
+    MQTTClient_setCallbacks(client, client, connlost, arrivedMSG, delivered);
+
+    if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
+        printf("Failed to connect, return code %d\n", rc);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Subscribing to topic %s for client %s using QoS%d\n\n", topicSUB, CLIENTID, QOS);
+    MQTTClient_subscribe(client, topicSUB, QOS);
+
+    // Keep the program running to continue receiving and publishing messages
+    for(;;) {
+        ;
+    }
+
+    MQTTClient_disconnect(client, 10000);
+    MQTTClient_destroy(&client);
+    return rc;
 }
