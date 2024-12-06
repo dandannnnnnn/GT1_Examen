@@ -37,6 +37,7 @@
 volatile MQTTClient_deliveryToken deliveredtoken;
 volatile float totaal_dagverbruik, totaal_nachtverbruik, totaal_dagopbrengst, totaal_nachtopbrengst;
 volatile float totaal_gasverbruik;
+volatile float totale_stroomverbruik, totale_stroomopbrengst, totale_gasverbruik;
 
 struct meter_data {
     char dateTime[DATE_TIME_LEN]; //only 1 dateTime necessarry
@@ -50,6 +51,8 @@ struct meter_data {
 
 void addTo_FILE(const char *message);
 void dateTime(char *timestamp);
+float calculations(float *startCalculations);
+float startCalculations();
 
 void delivered(void *context, MQTTClient_deliveryToken dt) {
     printf("Message with token value %d delivery confirmed\n", dt);
@@ -59,7 +62,7 @@ void delivered(void *context, MQTTClient_deliveryToken dt) {
 
 //dateTime ; totaal_dagverbruik ; totaal_nachtverbruik ; totaal_dagopbrengst ; totaal_nachtopbrengst ; totaal_gasverbruik
 
-//Extracts msg and splits into fields
+//Extracts msg and split into fields
 int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     char *payload = message->payload;
     char *token_str;
@@ -100,14 +103,14 @@ float startCalculations() {
     float start_gasverbruik = 6184.92480;
 } 
 //Calculating the usage of electricity
-void calculations(float *startCalculations) {
+float calculations(float *startCalculations) {
     float totale_stroomverbruik = totaal_dagverbruik + totaal_nachtverbruik;
     float totale_stroomopbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
 
     float totale_gasverbruik = totale_gasverbruik * 11.55;
 }
 
-/*void calculationsDay() {
+/*void calculationsDay() { //Calculations per day
 }*/
 void dateTime(char *timestamp) {
         time_t t ;
@@ -133,30 +136,31 @@ void addTo_FILE(const char *message) {
     fprintf(file, "%s\n", message);
     fclose(file);
     
-    //for-lus
-    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-    printf("Elektriciteit- en gas verbruik - totalen per dag\n");
-    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
-    printf("STARTWAARDEN\n\n");
-    printf("DATE - TIME: %s\n",dateTime);
-    printf("DAG\tTotaal verbruik\t= %f kWh\n");
-    printf("DAG\tTotaal opbrengst\t= %f kWh\n");
-    printf("NACHT\tTotaal verbruik\t= %f kWh\n");
-    printf("NACHT\tTotaal opbrengst\t= %f kWh\n");
-    printf("GAS\tTotaal verbruik\t= %f m³\n");
-    printf("---------------------------------------------------------------\n");
-    printf("TOTALEN:\n");
-    printf("---------------------------------------------------------------\n\n");
+    for(int i = 0; i<=5 ;i++) {
+    printf(file,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    printf(file,"Elektriciteit- en gas verbruik - totalen per dag\n");
+    printf(file,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
+    printf(file,"STARTWAARDEN\n\n");
+    printf(file,"DATE - TIME: %s\n",dateTime);
+    printf(file,"DAG\tTotaal verbruik\t= %f kWh\n");
+    printf(file,"DAG\tTotaal opbrengst\t= %f kWh\n");
+    printf(file,"NACHT\tTotaal verbruik\t= %f kWh\n");
+    printf(file,"NACHT\tTotaal opbrengst\t= %f kWh\n");
+    printf(file,"GAS\tTotaal verbruik\t= %f m³\n");
+    printf(file,"---------------------------------------------------------------\n");
+    printf(file,"TOTALEN:\n");
+    printf(file,"---------------------------------------------------------------\n\n");
 
     while(fgets(line, sizeof(line), file != NULL)) {
-        printf("Datum: %s\n");
+        printf("Datum: %s\n", dateTime);
         printf("---------------------\n");
         printf("STROOM:\n");
-        printf("\tTotaal verbruik\t=\t%f kWh\n");
-        printf("\tTotaal opbrengst\t=\t%f kWh\n");
+        printf("\tTotaal verbruik\t=\t%f kWh\n", totale_stroomverbruik);
+        printf("\tTotaal opbrengst\t=\t%f kWh\n", totale_stroomopbrengst);
         printf("GAS:\n");
-        printf("\tTotaal verbruik\t=\t%f kWh\n");
+        printf("\tTotaal verbruik\t=\t%f kWh\n", totale_gasverbruik);
         printf("*");
+    }
     }
 }
 
@@ -176,8 +180,6 @@ int main() {
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
 
-    // Define the correct call back functions when messages arrive
-    //MQTTClient_setCallbacks(client, CLIENTID, connlost, arrivedMSG, delivered);
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
