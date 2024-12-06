@@ -31,10 +31,9 @@
 #define outputLEN 2048
 #define DATE_TIME_LEN 120
 
-#define appendFile 100
+#define appendFILE 100 //after 100 messages it will be added to the file
 
 volatile MQTTClient_deliveryToken deliveredtoken;
-volatile int counter = 0;
 volatile float totaal_dagverbruik, totaal_nachtverbruik, totaal_dagopbrengst, totaal_nachtopbrengst;
 volatile float totaal_gasverbruik;
 
@@ -64,16 +63,20 @@ int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message 
     char *payload = message->payload;
     char *token_str;
     char timeBUFFER[20];
-    float data;
 
+    //start: dateTime
     token_str = strtok(payload, ";");
-    char *totaal_dagverbruik = token_str;
+    float *totaal_dagverbruik = token_str;
     token_str = strtok(NULL, ";");
-    char *totaal_nachtverbruik = token_str;
+    float *totaal_nachtverbruik = token_str;
     token_str = strtok(NULL, ";");
-    data = strtold(token_str, NULL);
+    float *totaal_dagopbrengst = token_str;
+    token_str = strtok(NULL, ";");
+    float *totaal_nachtopbrengst = token_str;
+    token_str = strtok(NULL, ";");
+    float *totaal_gasverbruik = token_str;
+    token_str = strtok(token_str, NULL); //end splitting in fields
     
-    counter++;
 }
 
 //Calculating the usage of electricity
@@ -101,6 +104,17 @@ void dateTime(char *timestamp) {
      
     return( 0 );
 }
+
+void addTo_FILE(const char *messageFormatted) {
+    FILE *file = fopen("receivedMSGs.txt", "a");
+    if (file == NULL) {
+        perror("Error: cannot open file");
+        return;
+    }
+    fprintf(file, "%s\n", messageFormatted);
+    fclose(file);
+}
+
 
 void connlost(void *context, char *cause) {
     printf("\nConnection lost\n");
