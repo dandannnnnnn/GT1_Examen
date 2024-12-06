@@ -35,11 +35,8 @@
 
 volatile MQTTClient_deliveryToken deliveredtoken;
 volatile int counter = 0;
-/*volatile float totVerbruik_DAG = 0;
-volatile float totOpbrengst_DAG = ;
-volatile float totVerbruik_NACHT =;
-volatile float totOpbrengst_NACHT = ;
-volatile float totVerbruik_GAS = ; */
+volatile float totaal_dagverbruik, totaal_nachtverbruik, totaal_dagopbrengst, totaal_nachtopbrengst;
+volatile float totaal_gasverbruik;
 
 struct meter_data {
     char dateTime[DATE_TIME_LEN]; //only 1 dateTime necessarry
@@ -70,17 +67,24 @@ int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message 
     float data;
 
     token_str = strtok(payload, ";");
-    char *device = token_str;
+    char *totaal_dagverbruik = token_str;
     token_str = strtok(NULL, ";");
-    char *code = token_str;
+    char *totaal_nachtverbruik = token_str;
     token_str = strtok(NULL, ";");
     data = strtold(token_str, NULL);
     
     counter++;
+}
 
+//Calculating the usage of electricity
+void calculationsElectricity() {
+    float totale_verbruik = totaal_dagverbruik + totaal_nachtverbruik;
+    float totale_opbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
+}
 
-
-
+//Calculating the usage of gas
+void calculationsGas() {
+    float totale_gasverbruik = totale_gasverbruik * 11.55;
 }
 
 void dateTime(char *timestamp) {
@@ -118,7 +122,7 @@ int main() {
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     printf("Subscribing to topic %s for client %s using QoS%d\n\n", topicSUB, CLIENTID, QOS);
