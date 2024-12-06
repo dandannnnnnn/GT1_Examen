@@ -78,6 +78,19 @@ char arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message
     char *totaal_gasverbruik = token_str;
     token_str = strtok(token_str, NULL); //end splitting in fields
     
+        // Publish to outgoingMSG (topicPUB)
+    MQTTClient client = (MQTTClient)context;
+    MQTTClient_message pubmsg = MQTTClient_message_initializer;
+    MQTTClient_deliveryToken token;
+
+    pubmsg.payload = outputLEN;
+    pubmsg.payloadlen = strlen(outputLEN);
+    pubmsg.qos = QOS;
+    pubmsg.retained = 0;
+
+    MQTTClient_publishMessage(client, topicPUB, &pubmsg, &token);
+    printf("Publishing to topic %s\n",topicPUB);
+
 }
 float startCalculations() {
     float start_dagverbruik = 6340.33594;
