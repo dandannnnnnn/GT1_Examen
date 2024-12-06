@@ -78,18 +78,24 @@ char arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message
     token_str = strtok(token_str, NULL); //end splitting in fields
     
 }
+float startCalculations() {
+    float start_dagverbruik = 6340.33594;
+    float start_dagopbrengst = 298.30499;
+    float start_nachtverbruik = 6664.99414;
+    float start_nachtopbrengst = 146.75200;
 
+    float start_gasverbruik = 6184.92480;
+} 
 //Calculating the usage of electricity
-void calculationsElectricity() {
-    float totale_verbruik = totaal_dagverbruik + totaal_nachtverbruik;
-    float totale_opbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
-}
+void calculations(float *startCalculations) {
+    float totale_stroomverbruik = totaal_dagverbruik + totaal_nachtverbruik;
+    float totale_stroomopbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
 
-//Calculating the usage of gas
-void calculationsGas() {
     float totale_gasverbruik = totale_gasverbruik * 11.55;
 }
 
+/*void calculationsDay() {
+}*/
 void dateTime(char *timestamp) {
         time_t t ;
     struct tm *tmp ;
