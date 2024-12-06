@@ -35,10 +35,13 @@ verstuur uitgaande bericht naar topicPUB
 --------------------------------
 FUNCTION: calculations
 --------------------------------
-float totale_stroomverbruik = totaal_dagverbruik + totaal_nachtverbruik;
-float totale_stroomopbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
-
-float totale_gasverbruik = totale_gasverbruik * 11.55;
+float calculations(float startDagVerbruik, float startNachtVerbruik, float startDagOpbrengst, float startNachtOpbrengst) {
+    totale_stroomverbruik = startDagVerbruik + startNachtVerbruik;
+    totale_stroomopbrengst = startDagOpbrengst + startNachtOpbrengst;
+    totale_gasverbruik = totaal_gasverbruik * 11.55;
+    return totale_stroomverbruik - totale_stroomopbrengst;
+    return totale_gasverbruik;
+}
 
 ------------------------------
 FUNCTION: dateTime
@@ -57,31 +60,32 @@ Open file en zit in append modus ("a")
 
 Als file niet opengaat, printf("Error: cannot open file")
 
-for-lus: voor elke dag print de volgende statements:
-    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-    printf("Elektriciteit- en gas verbruik - totalen per dag\n");
-    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
-    printf("STARTWAARDEN\n\n");
-    printf("DATE - TIME: %s\n",dateTime);
-    printf("DAG\tTotaal verbruik\t= %f kWh\n");
-    printf("DAG\tTotaal opbrengst\t= %f kWh\n");
-    printf("NACHT\tTotaal verbruik\t= %f kWh\n");
-    printf("NACHT\tTotaal opbrengst\t= %f kWh\n");
-    printf("GAS\tTotaal verbruik\t= %f m³\n");
-    printf("---------------------------------------------------------------\n");
-    printf("TOTALEN:\n");
-    printf("---------------------------------------------------------------\n\n");
+snprintf gebruiken om texten in de file te steken.
+snprintf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
+    Elektriciteit- en gas verbruik - totalen per dag\n
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n
+    STARTWAARDEN\n\n
+    DATE-TIME: %s\n
+    DAG\tTotaal verbruik\t= 6340.33594 kWh\n
+    DAG\tTotaal opbrengst\t= 298.30499 kWh\n
+    NACHT\tTotaal verbruik\t= 6664.99414 kWh\n
+    NACHT\tTotaal opbrengst\t= 146.75200 kWh\n
+    GAS\tTotaal verbruik\t= 6184.92480 m³\n
+    -------------------------------------------------------------------------\n
+    TOTALEN:\n
+    -------------------------------------------------------------------------\n\n
+    ");
 
-    while-lus: terwijl hetzelfde dag nog is, print volgende statements in de file:
-        printf("Datum: %s\n");
-        printf("---------------------\n");
-        printf("STROOM:\n");
-        printf("\tTotaal verbruik\t=\t%f kWh\n");
-        printf("\tTotaal opbrengst\t=\t%f kWh\n");
-        printf("GAS:\n");
-        printf("\tTotaal verbruik\t=\t%f kWh\n");
-        printf("*");
-EINDE FOR-LUS EN WHILE-LUS
+    snprintf(outputMessage, outputLEN, 
+    "Date: %s\n
+    -------------
+    STROOM:\n
+    \tTotaal verbruik\t=\t %.2f kWh
+    \n\tTotaal opbrengst\t=\t %.2f kWh
+    \nGAS:\n
+    \tTotaal verbruik\t=\t %.2f m³\n"
+    dateTime, totale_stroomverbruik, totale_stroomopbrengst, totale_gasverbruik);
+
 
 -------------------------------
 FUNCTION: connlost
