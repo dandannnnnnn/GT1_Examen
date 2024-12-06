@@ -123,13 +123,14 @@ void dateTime(char *timestamp) {
      
 }
 
-void addTo_FILE(const char *messageFormatted) {
+void addTo_FILE(const char *message) {
     FILE *file = fopen("receivedMSGs.txt", "a");
+    char line[2048];
     if (file == NULL) {
         perror("Error: cannot open file");
         return;
     }
-    fprintf(file, "%s\n", messageFormatted);
+    fprintf(file, "%s\n", message);
     fclose(file);
     
     //for-lus
@@ -147,16 +148,16 @@ void addTo_FILE(const char *messageFormatted) {
     printf("TOTALEN:\n");
     printf("---------------------------------------------------------------\n\n");
 
-    //while-lus
-    printf("Datum: %s\n");
-    printf("---------------------\n");
-    printf("STROOM:\n");
-    printf("\tTotaal verbruik\t=\t%f kWh\n");
-    printf("\tTotaal opbrengst\t=\t%f kWh\n");
-    printf("GAS:\n");
-    printf("\tTotaal verbruik\t=\t%f kWh\n");
-    printf("*");
-
+    while(fgets(line, sizeof(line), file != NULL)) {
+        printf("Datum: %s\n");
+        printf("---------------------\n");
+        printf("STROOM:\n");
+        printf("\tTotaal verbruik\t=\t%f kWh\n");
+        printf("\tTotaal opbrengst\t=\t%f kWh\n");
+        printf("GAS:\n");
+        printf("\tTotaal verbruik\t=\t%f kWh\n");
+        printf("*");
+    }
 }
 
 

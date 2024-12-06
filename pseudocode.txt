@@ -9,20 +9,84 @@ Datum: 06/12/2024
 ===============================================================================================================================
 ===============================================================================================================================
 
-----------------------------
-FUNCTION: messageHandler
-Purpose: When message arrives, the msg will be added to txt file
-----------------------------
+Declareer IPadress, clientid, topic, payload, QOS, TIMEOUT.
+Declareer topicSUB en topicPUB, topicLEN, outputLEN en DATE_TIME_LEN
 
-add print statements for topic and message for DEBUGGING.
+zet variabelena globaal: totaal_nachtopbrengst, totaal_dagopbrengst, totaal_dagverbruik, totaal_nachtverbruik, totale_gasverbruik, totale_stroomopbrengst, totale_stroomverbruik.
 
-open file and append
-    Begin IF-statement
-IF: file is not NULL then print("Opening file\n")
-ELSE: print("Cannot open file\n")
-    End IF-statement
+Maak een structure tabel aan met de variabelen.
 
-print message into the file and close the file.
+-------------------
+FUNCTION: delivered
+-------------------
+Afdrukken dat berichten is verstuurd naar de broker
+printf("Message with token value %d delivery confirmed\n")
 
----------------------------
-FUNCTION: 
+-------------------------
+FUNCTION: arrivedMSG
+-------------------------
+Haal het bericht van topic uit en splits het dan in velden
+gebruik tokens en ";" om velden te splitsen
+
+token_str = strtok(token_str, NULL); aan het einde van lijn
+
+verstuur uitgaande bericht naar topicPUB
+
+--------------------------------
+FUNCTION: calculations
+--------------------------------
+float totale_stroomverbruik = totaal_dagverbruik + totaal_nachtverbruik;
+float totale_stroomopbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
+
+float totale_gasverbruik = totale_gasverbruik * 11.55;
+
+------------------------------
+FUNCTION: dateTime
+------------------------------
+gebruik time.h library
+
+formateer datumTijd
+sprintf( timestamp, "%02d.%02d.%02d-%02d:%02d:%02d", 
+        tmp->tm_year-100, tmp->tm_mon+1, tmp->tm_mday, // YEAR-MONTH_DAY
+        tmp->tm_hour, tmp->tm_min, tmp->tm_sec ); // HOUR:MIN:SEC
+
+-----------------------------
+FUNCTION: addTo_FILE
+-----------------------------
+Open file en zit in append modus ("a")
+
+Als file niet opengaat, printf("Error: cannot open file")
+
+for-lus: voor elke dag print de volgende statements:
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    printf("Elektriciteit- en gas verbruik - totalen per dag\n");
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
+    printf("STARTWAARDEN\n\n");
+    printf("DATE - TIME: %s\n",dateTime);
+    printf("DAG\tTotaal verbruik\t= %f kWh\n");
+    printf("DAG\tTotaal opbrengst\t= %f kWh\n");
+    printf("NACHT\tTotaal verbruik\t= %f kWh\n");
+    printf("NACHT\tTotaal opbrengst\t= %f kWh\n");
+    printf("GAS\tTotaal verbruik\t= %f m³\n");
+    printf("---------------------------------------------------------------\n");
+    printf("TOTALEN:\n");
+    printf("---------------------------------------------------------------\n\n");
+
+    while-lus: terwijl hetzelfde dag nog is, print volgende statements in de file:
+        printf("Datum: %s\n");
+        printf("---------------------\n");
+        printf("STROOM:\n");
+        printf("\tTotaal verbruik\t=\t%f kWh\n");
+        printf("\tTotaal opbrengst\t=\t%f kWh\n");
+        printf("GAS:\n");
+        printf("\tTotaal verbruik\t=\t%f kWh\n");
+        printf("*");
+EINDE FOR-LUS EN WHILE-LUS
+
+-------------------------------
+FUNCTION: connlost
+-------------------------------
+void connlost(void *context, char *cause) {
+    printf("\nConnection lost\n");
+    printf("     cause: %s\n", cause);
+}
