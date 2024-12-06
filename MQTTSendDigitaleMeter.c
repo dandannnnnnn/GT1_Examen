@@ -7,7 +7,7 @@
 
 #define DEBUG
 
-#define FILE_NAME		"/home/pi/Documents/C-Files/receivedMSGs.txt"
+#define FILE_NAME		"receivedMSGs.txt"
 #define MAX_LINE_LEN	2048
 
 #define ADDRESS     "tcp://192.168.0.101:1883"  // Local RP MQTT broker address

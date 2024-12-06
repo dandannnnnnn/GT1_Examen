@@ -51,7 +51,7 @@ struct meter_data {
 
 void addTo_FILE(const char *message);
 void dateTime(char *timestamp);
-float calculations(float *startCalculations);
+float calculations();
 float startCalculations();
 
 void delivered(void *context, MQTTClient_deliveryToken dt) {
@@ -64,24 +64,36 @@ void delivered(void *context, MQTTClient_deliveryToken dt) {
 
 //Extracts msg and split into fields
 int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
-    char *payload = message->payload;
+    char *payload = (char *)message->payload; // Casting payload
     char *token_str;
-    char timeBUFFER[20];
 
-    //start: dateTime
+    // Parse payload: Format expected -> dateTime;dagverbruik;nachtverbruik;dagopbrengst;nachtopbrengst;gasverbruik
     token_str = strtok(payload, ";");
-    char *totaal_dagverbruik = token_str;
+    if (token_str == NULL) {
+        printf("Error: Invalid payload format.\n");
+        MQTTClient_freeMessage(&message);
+        MQTTClient_free(topicName);
+        return 1;
+    }
+    char dateTime[DATE_TIME_LEN];
+    strncpy(dateTime, token_str, DATE_TIME_LEN);
+
     token_str = strtok(NULL, ";");
-    char *totaal_nachtverbruik = token_str;
+    totaal_dagverbruik = token_str ? atof(token_str) : 0;
+
     token_str = strtok(NULL, ";");
-    char *totaal_dagopbrengst = token_str;
+    totaal_nachtverbruik = token_str ? atof(token_str) : 0;
+
     token_str = strtok(NULL, ";");
-    char *totaal_nachtopbrengst = token_str;
+    totaal_dagopbrengst = token_str ? atof(token_str) : 0;
+
     token_str = strtok(NULL, ";");
-    char *totaal_gasverbruik = token_str;
-    token_str = strtok(token_str, NULL); //end splitting in fields
-    
-        // Publish to outgoingMSG (topicPUB)
+    totaal_nachtopbrengst = token_str ? atof(token_str) : 0;
+
+    token_str = strtok(NULL, ";");
+    totaal_gasverbruik = token_str ? atof(token_str) : 0;
+
+    // Publish response message to topicPUB
     MQTTClient client = (MQTTClient)context;
     MQTTClient_message pubmsg = MQTTClient_message_initializer;
     MQTTClient_deliveryToken token;
@@ -91,9 +103,26 @@ int arrivedMSG(void *context, char *topicName, int topicLen, MQTTClient_message 
     pubmsg.qos = QOS;
     pubmsg.retained = 0;
 
+    char outputMessage[outputLEN];
+    snprintf(outputMessage, outputLEN, 
+    "Date: %s\nDagverbruik: %.2f kWh\nNachtverbruik: %.2f kWh\nDagopbrengst: %.2f kWh\nNachtopbrengst: %.2f kWh\nGasverbruik: %.2f m³",
+    dateTime, totaal_dagverbruik, totaal_nachtverbruik, totaal_dagopbrengst, totaal_nachtopbrengst, totaal_gasverbruik);
+
+    pubmsg.payload = outputMessage;
+    pubmsg.payloadlen = strlen(outputMessage);
+    pubmsg.qos = QOS;
+    pubmsg.retained = 0;
+
     MQTTClient_publishMessage(client, topicPUB, &pubmsg, &token);
-    printf("Publishing to topic %s\n",topicPUB);
+    printf("Publishing to topic %s\nMessage: %s\n", topicPUB, outputMessage);
+
+    // Clean up
+    MQTTClient_freeMessage(&message);
+    MQTTClient_free(topicName);
+
+    return 1;
 }
+
 float startCalculations() {
     float start_dagverbruik = 6340.33594;
     float start_dagopbrengst = 298.30499;
@@ -102,16 +131,15 @@ float startCalculations() {
 
     float start_gasverbruik = 6184.92480;
 } 
-//Calculating the usage of electricity
-float calculations(float *startCalculations) {
-    float totale_stroomverbruik = totaal_dagverbruik + totaal_nachtverbruik;
-    float totale_stroomopbrengst = totaal_dagopbrengst + totaal_nachtopbrengst;
-
-    float totale_gasverbruik = totale_gasverbruik * 11.55;
+//Calculating the usage of electricity and gas
+float calculations(float startDagVerbruik, float startNachtVerbruik, float startDagOpbrengst, float startNachtOpbrengst) {
+    totale_stroomverbruik = startDagVerbruik + startNachtVerbruik;
+    totale_stroomopbrengst = startDagOpbrengst + startNachtOpbrengst;
+    totale_gasverbruik = totaal_gasverbruik * 11.55;
+    return totale_stroomverbruik - totale_stroomopbrengst;
+    return totale_gasverbruik;
 }
 
-/*void calculationsDay() { //Calculations per day
-}*/
 void dateTime(char *timestamp) {
         time_t t ;
     struct tm *tmp ;
@@ -128,50 +156,20 @@ void dateTime(char *timestamp) {
 
 void addTo_FILE(const char *message) {
     FILE *file = fopen("receivedMSGs.txt", "a");
-    char line[2048];
     if (file == NULL) {
-        perror("Error: cannot open file");
+        perror("Error: Cannot open file");
         return;
     }
     fprintf(file, "%s\n", message);
     fclose(file);
-    
-    for(int i = 0; i<=5 ;i++) {
-    printf(file,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-    printf(file,"Elektriciteit- en gas verbruik - totalen per dag\n");
-    printf(file,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
-    printf(file,"STARTWAARDEN\n\n");
-    printf(file,"DATE - TIME: %s\n",dateTime);
-    printf(file,"DAG\tTotaal verbruik\t= %f kWh\n",totaal_dagverbruik);
-    printf(file,"DAG\tTotaal opbrengst\t= %f kWh\n",totaal_dagopbrengst);
-    printf(file,"NACHT\tTotaal verbruik\t= %f kWh\n", totaal_nachtverbruik);
-    printf(file,"NACHT\tTotaal opbrengst\t= %f kWh\n", totaal_nachtopbrengst);
-    printf(file,"GAS\tTotaal verbruik\t= %f m³\n", totaal_gasverbruik);
-    printf(file,"---------------------------------------------------------------\n");
-    printf(file,"TOTALEN:\n");
-    printf(file,"---------------------------------------------------------------\n\n");
-
-    while(fgets(line, sizeof(line), file != NULL)) {
-        printf("Datum: %s\n", dateTime);
-        printf("---------------------\n");
-        printf("STROOM:\n");
-        printf("\tTotaal verbruik\t=\t%f kWh\n", totale_stroomverbruik);
-        printf("\tTotaal opbrengst\t=\t%f kWh\n", totale_stroomopbrengst);
-        printf("GAS:\n");
-        printf("\tTotaal verbruik\t=\t%f kWh\n", totale_gasverbruik);
-        printf("*");
-    }
-    }
 }
 
-
 void connlost(void *context, char *cause) {
-    printf("\nConnection lost\n");
-    printf("     cause: %s\n", cause);
+    printf("\nConnection lost\nCause: %s\n", cause);
 }
 
 int main() {
-    // Open MQTT client for listening
+    // Initialize MQTT client
     MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     int rc;
@@ -184,17 +182,18 @@ int main() {
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
         printf("Failed to connect, return code %d\n", rc);
-        exit(1);
+        return 1;
     }
 
     printf("Subscribing to topic %s for client %s using QoS%d\n\n", topicSUB, CLIENTID, QOS);
     MQTTClient_subscribe(client, topicSUB, QOS);
 
-    // Keep the program running to continue receiving and publishing messages
-    for(;;) {
-        ;
+    // Keep the program running to handle incoming messages
+    while (1) {
+        sleep(1); // Use sleep to prevent busy-wait
     }
 
+    // Disconnect and clean up
     MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);
     return rc;
